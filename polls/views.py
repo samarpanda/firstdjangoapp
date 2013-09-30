@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from polls.models import Question, Choice
@@ -11,14 +11,12 @@ def index(request):
 	return render(request, 'polls/index.html', context)
 
 def detail(request, question_id):
-	
 	question = get_object_or_404(Question, pk=question_id)
 	return render(request, 'polls/detail.html', {'question': question})
-	# return HttpResponse("You are looking at question %s." % question_id)
 
 def results(request, question_id):
-	response = "You're looking at the results of question %s."
-	return HttpResponse(response % question_id)
+	question = get_object_or_404(Question, pk=question_id)
+	return render(request, 'polls/results.html', {'question': question})
 
 def vote(request, question_id):
 	p = get_object_or_404(Question, pk=question_id)
@@ -33,4 +31,3 @@ def vote(request, question_id):
 		selected_choice.votes += 1
 		selected_choice.save()
 		return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
-	#return HttpResponse("You're voting on question %s." % question_id)
