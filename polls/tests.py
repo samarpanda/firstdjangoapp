@@ -1,16 +1,20 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+import datetime
 
-Replace this with more appropriate tests for your application.
-"""
-
+from django.utils import timezone
 from django.test import TestCase
 
+from polls.models import Question
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class QuestionMethodTests(TestCase):
+	def test_was_published_recently_with_future_question(self):
+		"""
+		was_publised_recently() should return false for questions whose pub_date is in the future
+		"""
+		time = timezone.now() + datetime.timedelta(days=30)
+		future_question = Question(pub_date=time)
+		self.assertEqual(future_question.was_published_recently(), False)
+
+	def test_was_published_recently_with_old_question(self):
+		time = timezone.now() - datetime.timedelta(days=30)
+		old_question = Question(pub_date=time)
+		self.assertEqual(old_question.was_published_recently(), False)
